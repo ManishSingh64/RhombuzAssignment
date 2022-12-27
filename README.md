@@ -33,4 +33,4 @@ Frontend deployed on NETLIFY.
 [netlify](https://github.com/)
 
 Backend deployed on RENDER
-[render](https://rhombuzdata.onrender.com/)
+[https://rhombuzdata.onrender.com/](https://rhombuzdata.onrender.com/)
