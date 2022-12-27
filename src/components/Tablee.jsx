@@ -11,6 +11,7 @@ import {
   TableCaption,
   TableContainer,
   useToast,
+  Checkbox,
 } from "@chakra-ui/react";
 import {
   ArrowUpDownIcon,
@@ -44,6 +45,8 @@ export const Tablee = () => {
   const [sortGender, setSortGender] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState();
+  const [status,setStatus] = useState(false)
+  const [selectedRows, setSelectedRows] = useState();
 
   useEffect(() => {
     axios
@@ -83,15 +86,16 @@ export const Tablee = () => {
     }
   }
   function deleteRowFunc(el) {
-    console.log(el);
     axios.delete(`http://localhost:8080/user/${el._id}`).then((res) => {
-      axios.get(
-        `http://localhost:8080/user?sortByEmail=${sortEmail}&sortByGender=${sortGender}&page=${page}&limit=10`
-      ).then((res) => {
-        setTableData(res.data.users)
-        setPage(res.data.currentPage);
-        setTotalPages(res.data.totalPages);
-      });
+      axios
+        .get(
+          `http://localhost:8080/user?sortByEmail=${sortEmail}&sortByGender=${sortGender}&page=${page}&limit=10`
+        )
+        .then((res) => {
+          setTableData(res.data.users);
+          setPage(res.data.currentPage);
+          setTotalPages(res.data.totalPages);
+        });
     });
 
     return toast({
@@ -102,13 +106,19 @@ export const Tablee = () => {
     });
   }
   function copyClipboardFunc(value) {
-    navigator.clipboard.writeText(value)
+    navigator.clipboard.writeText(value);
     return toast({
       title: "Copied To Clipboard",
       status: "success",
       duration: 9000,
       isClosable: true,
     });
+  }
+  function selectRowsFunc(el) {
+    setStatus((prev) => !prev)
+    if(status){
+      console.log(el)
+    }
   }
   // console.log(tableData);
   return (
@@ -117,6 +127,7 @@ export const Tablee = () => {
         <Table variant="simple">
           <Thead bg="gray.100">
             <Tr>
+              <Th>Select</Th>
               <Th>First Name</Th>
               <Th>Last Name</Th>
               <Th>
@@ -133,22 +144,45 @@ export const Tablee = () => {
           {tableData?.map((el) => (
             <Tbody key={el._id}>
               <Tr>
-                <Td>{el.first_name} <CopyIcon onClick={() => copyClipboardFunc(el.first_name)}/></Td>
-                <Td>{el.last_name} <CopyIcon onClick={() => copyClipboardFunc(el.last_name)}/></Td>
-                <Td>{el.email} <CopyIcon onClick={() => copyClipboardFunc(el.email)}/></Td>
-                <Td>{el.gender} <CopyIcon onClick={() => copyClipboardFunc(el.gender)}/></Td>
                 <Td>
-                  <DeleteIcon style={{cursor:'pointer'}} onClick={() => deleteRowFunc(el)} />
+                  <Checkbox
+                    colorScheme="red"
+                    onChange={(el) => selectRowsFunc(el)}
+                  ></Checkbox>
+                </Td>
+                <Td>
+                  {el.first_name}{" "}
+                  <CopyIcon style={{cursor:'copy'}} onClick={() => copyClipboardFunc(el.first_name)} />
+                </Td>
+                <Td>
+                  {el.last_name}{" "}
+                  <CopyIcon style={{cursor:'copy'}} onClick={() => copyClipboardFunc(el.last_name)} />
+                </Td>
+                <Td>
+                  {el.email}{" "}
+                  <CopyIcon style={{cursor:'copy'}} onClick={() => copyClipboardFunc(el.email)} />
+                </Td>
+                <Td>
+                  {el.gender}{" "}
+                  <CopyIcon style={{cursor:'copy'}} onClick={() => copyClipboardFunc(el.gender)} />
+                </Td>
+                <Td>
+                  <DeleteIcon
+                    style={{ cursor: "pointer" }}
+                    onClick={() => deleteRowFunc(el)}
+                  />
                 </Td>
               </Tr>
             </Tbody>
           ))}
         </Table>
       </TableContainer>
+      <br />
       <div>
         <h3>
           Page {page} of <label style={{ color: "grey" }}>{totalPages}</label>
         </h3>
+        <br />
         <button
           style={page == 1 ? paginationButtonDisable : paginationButtonEnable}
           disabled={page == 1}
@@ -156,6 +190,7 @@ export const Tablee = () => {
         >
           <ChevronLeftIcon />
         </button>
+        <vr />
         <button
           style={
             page == totalPages
