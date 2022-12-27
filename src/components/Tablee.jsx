@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Table,
   Thead,
@@ -49,8 +50,15 @@ export const Tablee = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState();
   const [selected, setSelected] = useState([]);
+  const [searchparams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
+    setSearchParams({
+      sortEmail,
+      sortGender,
+      page,
+      limit: 10,
+    });
     axios
       .get(
         `https://rhombuzdata.onrender.com/user?sortByEmail=${sortEmail}&sortByGender=${sortGender}&page=${page}&limit=10`
@@ -88,17 +96,19 @@ export const Tablee = () => {
     }
   }
   function deleteRowFunc(el) {
-    axios.delete(`https://rhombuzdata.onrender.com/user/${el._id}`).then((res) => {
-      axios
-        .get(
-          `https://rhombuzdata.onrender.com/user?sortByEmail=${sortEmail}&sortByGender=${sortGender}&page=${page}&limit=10`
-        )
-        .then((res) => {
-          setTableData(res.data.users);
-          setPage(res.data.currentPage);
-          setTotalPages(res.data.totalPages);
-        });
-    });
+    axios
+      .delete(`https://rhombuzdata.onrender.com/user/${el._id}`)
+      .then((res) => {
+        axios
+          .get(
+            `https://rhombuzdata.onrender.com/user?sortByEmail=${sortEmail}&sortByGender=${sortGender}&page=${page}&limit=10`
+          )
+          .then((res) => {
+            setTableData(res.data.users);
+            setPage(res.data.currentPage);
+            setTotalPages(res.data.totalPages);
+          });
+      });
 
     return toast({
       title: "Row Deleted",
