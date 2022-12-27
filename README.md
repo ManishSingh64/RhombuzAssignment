@@ -37,9 +37,10 @@ Details of all users in table format.
 
 # DEPLOYMENTS
 
-### `LIVE LINK`
+### `LIVE LINKS`
 Frontend deployed on NETLIFY.
-[netlify](https://github.com/)
+[LIVE](https://illustrious-lokum-13fd3a.netlify.app)
 
 Backend deployed on RENDER
-[https://rhombuzdata.onrender.com/](https://rhombuzdata.onrender.com/)
+### `URL`
+[CLICK TO SEE THE DATA](https://rhombuzdata.onrender.com/user?sortByEmail&sortByGender&page=1&limit=10)
