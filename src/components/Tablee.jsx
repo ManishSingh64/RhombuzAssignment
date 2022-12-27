@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
-import data from "../db.json";
 import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
   useToast,
   Checkbox,
@@ -38,6 +35,12 @@ let paginationButtonDisable = {
   borderRadius: "5px",
   cursor: "not-allowed",
 };
+let active = {
+  backgroundColor: "#98bbed",
+};
+let inactive = {
+  backgroundColor: "white",
+};
 export const Tablee = () => {
   const toast = useToast();
   const [tableData, setTableData] = useState();
@@ -45,13 +48,12 @@ export const Tablee = () => {
   const [sortGender, setSortGender] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState();
-  const [status,setStatus] = useState(false)
-  const [selectedRows, setSelectedRows] = useState();
+  const [selected, setSelected] = useState([]);
 
   useEffect(() => {
     axios
       .get(
-        `http://localhost:8080/user?sortByEmail=${sortEmail}&sortByGender=${sortGender}&page=${page}&limit=10`
+        `https://rhombuzdata.onrender.com/user?sortByEmail=${sortEmail}&sortByGender=${sortGender}&page=${page}&limit=10`
       )
       .then((res) => {
         // console.log(res.data);
@@ -86,10 +88,10 @@ export const Tablee = () => {
     }
   }
   function deleteRowFunc(el) {
-    axios.delete(`http://localhost:8080/user/${el._id}`).then((res) => {
+    axios.delete(`https://rhombuzdata.onrender.com/user/${el._id}`).then((res) => {
       axios
         .get(
-          `http://localhost:8080/user?sortByEmail=${sortEmail}&sortByGender=${sortGender}&page=${page}&limit=10`
+          `https://rhombuzdata.onrender.com/user?sortByEmail=${sortEmail}&sortByGender=${sortGender}&page=${page}&limit=10`
         )
         .then((res) => {
           setTableData(res.data.users);
@@ -115,12 +117,14 @@ export const Tablee = () => {
     });
   }
   function selectRowsFunc(el) {
-    setStatus((prev) => !prev)
-    if(status){
-      console.log(el)
+    if (!selected.includes(el._id)) {
+      setSelected([...selected, el._id]);
+    } else {
+      const index = selected.indexOf(el);
+      selected.splice(index, 1);
+      setSelected([...selected]);
     }
   }
-  // console.log(tableData);
   return (
     <div>
       <TableContainer maxWidth="80%" margin="auto" border="1px solid gray.200">
@@ -143,28 +147,40 @@ export const Tablee = () => {
           </Thead>
           {tableData?.map((el) => (
             <Tbody key={el._id}>
-              <Tr>
+              <Tr style={selected.includes(el._id) ? active : inactive}>
                 <Td>
                   <Checkbox
                     colorScheme="red"
-                    onChange={(el) => selectRowsFunc(el)}
+                    onChange={() => selectRowsFunc(el)}
                   ></Checkbox>
                 </Td>
                 <Td>
                   {el.first_name}{" "}
-                  <CopyIcon style={{cursor:'copy'}} onClick={() => copyClipboardFunc(el.first_name)} />
+                  <CopyIcon
+                    style={{ cursor: "copy" }}
+                    onClick={() => copyClipboardFunc(el.first_name)}
+                  />
                 </Td>
                 <Td>
                   {el.last_name}{" "}
-                  <CopyIcon style={{cursor:'copy'}} onClick={() => copyClipboardFunc(el.last_name)} />
+                  <CopyIcon
+                    style={{ cursor: "copy" }}
+                    onClick={() => copyClipboardFunc(el.last_name)}
+                  />
                 </Td>
                 <Td>
                   {el.email}{" "}
-                  <CopyIcon style={{cursor:'copy'}} onClick={() => copyClipboardFunc(el.email)} />
+                  <CopyIcon
+                    style={{ cursor: "copy" }}
+                    onClick={() => copyClipboardFunc(el.email)}
+                  />
                 </Td>
                 <Td>
                   {el.gender}{" "}
-                  <CopyIcon style={{cursor:'copy'}} onClick={() => copyClipboardFunc(el.gender)} />
+                  <CopyIcon
+                    style={{ cursor: "copy" }}
+                    onClick={() => copyClipboardFunc(el.gender)}
+                  />
                 </Td>
                 <Td>
                   <DeleteIcon
@@ -190,7 +206,6 @@ export const Tablee = () => {
         >
           <ChevronLeftIcon />
         </button>
-        <vr />
         <button
           style={
             page == totalPages
