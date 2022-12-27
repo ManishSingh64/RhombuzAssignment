@@ -28,7 +28,7 @@ Details of all users in table format.
 
 # DEPLOYMENTS
 
-### LIVE LINK
+### `LIVE LINK`
 Frontend deployed on NETLIFY.
 [netlify](https://github.com/)
 
