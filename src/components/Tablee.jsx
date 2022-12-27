@@ -10,15 +10,35 @@ import {
   Td,
   TableCaption,
   TableContainer,
+  useToast,
 } from "@chakra-ui/react";
 import {
   ArrowUpDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  CopyIcon,
+  DeleteIcon,
 } from "@chakra-ui/icons";
 import axios from "axios";
 
+let paginationButtonEnable = {
+  border: "1px solid grey",
+  backgroundColor: "purple",
+  color: "white",
+  width: "30px",
+  borderRadius: "5px",
+};
+
+let paginationButtonDisable = {
+  border: "1px solid grey",
+  backgroundColor: "#8b6b96",
+  color: "white",
+  width: "30px",
+  borderRadius: "5px",
+  cursor: "not-allowed",
+};
 export const Tablee = () => {
+  const toast = useToast();
   const [tableData, setTableData] = useState();
   const [sortEmail, setSortEmail] = useState("");
   const [sortGender, setSortGender] = useState("");
@@ -31,12 +51,13 @@ export const Tablee = () => {
         `http://localhost:8080/user?sortByEmail=${sortEmail}&sortByGender=${sortGender}&page=${page}&limit=10`
       )
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setTableData(res.data.users);
         setPage(res.data.currentPage);
         setTotalPages(res.data.totalPages);
       });
   }, [sortEmail, sortGender, page]);
+
   function sortEmailFunc() {
     if (sortEmail == "") {
       setSortEmail("asc");
@@ -61,20 +82,33 @@ export const Tablee = () => {
       setSortEmail("");
     }
   }
-  let paginationButtonEnable = {
-    border: "1px solid grey",
-    backgroundColor: "purple",
-    color: "white",
-    width: "30px",
-    borderRadius: "5px",
-  };
-  let paginationButtonDisable = {
-    border: "1px solid grey",
-    backgroundColor: "#8b6b96",
-    color: "white",
-    width: "30px",
-    borderRadius: "5px",
-    cursor:'not-allowed'
+  function deleteRowFunc(el) {
+    console.log(el);
+    axios.delete(`http://localhost:8080/user/${el._id}`).then((res) => {
+      axios.get(
+        `http://localhost:8080/user?sortByEmail=${sortEmail}&sortByGender=${sortGender}&page=${page}&limit=10`
+      ).then((res) => {
+        setTableData(res.data.users)
+        setPage(res.data.currentPage);
+        setTotalPages(res.data.totalPages);
+      });
+    });
+
+    return toast({
+      title: "Row Deleted",
+      status: "success",
+      duration: 9000,
+      isClosable: true,
+    });
+  }
+  function copyClipboardFunc(value) {
+    navigator.clipboard.writeText(value)
+    return toast({
+      title: "Copied To Clipboard",
+      status: "success",
+      duration: 9000,
+      isClosable: true,
+    });
   }
   // console.log(tableData);
   return (
@@ -93,15 +127,19 @@ export const Tablee = () => {
                 Gender{" "}
                 <ArrowUpDownIcon cursor="pointer" onClick={sortGenderFunc} />
               </Th>
+              <Th>Delete</Th>
             </Tr>
           </Thead>
           {tableData?.map((el) => (
             <Tbody key={el._id}>
               <Tr>
-                <Td>{el.first_name}</Td>
-                <Td>{el.last_name}</Td>
-                <Td>{el.email}</Td>
-                <Td>{el.gender}</Td>
+                <Td>{el.first_name} <CopyIcon onClick={() => copyClipboardFunc(el.first_name)}/></Td>
+                <Td>{el.last_name} <CopyIcon onClick={() => copyClipboardFunc(el.last_name)}/></Td>
+                <Td>{el.email} <CopyIcon onClick={() => copyClipboardFunc(el.email)}/></Td>
+                <Td>{el.gender} <CopyIcon onClick={() => copyClipboardFunc(el.gender)}/></Td>
+                <Td>
+                  <DeleteIcon style={{cursor:'pointer'}} onClick={() => deleteRowFunc(el)} />
+                </Td>
               </Tr>
             </Tbody>
           ))}
@@ -119,7 +157,11 @@ export const Tablee = () => {
           <ChevronLeftIcon />
         </button>
         <button
-          style={page == totalPages ? paginationButtonDisable : paginationButtonEnable}
+          style={
+            page == totalPages
+              ? paginationButtonDisable
+              : paginationButtonEnable
+          }
           disabled={page == totalPages}
           onClick={() => setPage((prev) => prev + 1)}
         >
