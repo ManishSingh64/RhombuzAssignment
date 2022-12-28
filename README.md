@@ -39,7 +39,7 @@ Details of all users in table format.
 
 ### `LIVE LINKS`
 Frontend deployed on NETLIFY.
-[LIVE](https://illustrious-lokum-13fd3a.netlify.app)
+[LIVE](https://rhombuz.netlify.app)
 ### `NOTE` Render deployment is free, so it will take approx 20 sec to show the data or refresh it again meanwhile you can see the code.
 Backend deployed on RENDER
 
