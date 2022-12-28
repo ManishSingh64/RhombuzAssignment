@@ -16,19 +16,19 @@ Details of all users in table format.
 ## Functional things
 
 - Copy any cell value to your clipboard by clicking on COPY icon.
-![](./src/assets/copy.png)
+  ![](./src/assets/copy.png)
 
 - Sort the list by EMAIL and GENDER by clicking on the updown arrow in heading.
-![](./src/assets/sort.png)
+  ![](./src/assets/sort.png)
 
 - Delete any row by clicking on DELETE icon.
-![](./src/assets/delete.png)
+  ![](./src/assets/delete.png)
 
 - Select the row by clicking on Checkbox button.
-![](./src/assets/select.png)
+  ![](./src/assets/select.png)
 
 - You can do pagination by clicking on arrow buttons at the bottom.
-![](./src/assets/pagination.png)
+  ![](./src/assets/pagination.png)
 
 
 ## Author
